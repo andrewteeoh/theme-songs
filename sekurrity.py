@@ -16,18 +16,6 @@ def is_valid_face_id(face_id):
     face = get_face_record(face_id)
     return face is not None
 
-def create_tables():
-    create_entrances_table()
-    create_faces_table()
-
-def create_entrances_table():
-    c = get_cursor()
-    c.execute("CREATE TABLE entrances (face_id integer, date text, time text, floor integer)")
-
-def create_faces_table():
-    c = get_cursor()
-    c.execute("CREATE TABLE faces (id integer primary key, name text, classification integer, encoding text)")
-
 def create_entrance(face_id):
     c = get_cursor()
     c.execute("INSERT INTO entrances VALUES (?, date('now'), datetime('now'), 5)", str(face_id))
