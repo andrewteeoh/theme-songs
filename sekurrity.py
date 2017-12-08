@@ -35,9 +35,9 @@ def deserialize_encoding(sencoding):
     encoding = numpy.ndarray(shape=(128,), dtype='float64', buffer=numpy.array(lencoding))
     return encoding
 
-def save_new_face(name, classification, encoding):
+def save_new_face(name, classification, encoding, track_id, start_time):
     c = get_cursor()
-    c.execute("INSERT INTO faces (name, classification, encoding) VALUES (?,?,?)", (name, classification, serialize_encoding(encoding)))
+    c.execute("INSERT INTO faces (name, classification, encoding, track, start_time) VALUES (?,?,?,?,?)", (name, classification, serialize_encoding(encoding), track_id, start_time))
     save()
 
 def retrieve_face_encoding(face_id):
