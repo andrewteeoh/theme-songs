@@ -1,8 +1,12 @@
 import sqlite3
 import json
 import numpy
+import os.path
 
-connection = sqlite3.connect('sekurrity.db')
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(BASE_DIR, "sekurrity.db")
+connection = sqlite3.connect(db_path)
 
 def get_cursor():
     return connection.cursor()
@@ -31,12 +35,12 @@ def deserialize_encoding(sencoding):
     encoding = numpy.ndarray(shape=(128,), dtype='float64', buffer=numpy.array(lencoding))
     return encoding
 
-def create_face(name, classification, encoding):
+def save_new_face(name, classification, encoding):
     c = get_cursor()
     c.execute("INSERT INTO faces (name, classification, encoding) VALUES (?,?,?)", (name, classification, serialize_encoding(encoding)))
     save()
 
-def get_face_encoding(face_id):
+def retrieve_face_encoding(face_id):
     face = get_face_record(face_id)
     if face is None:
         return None
