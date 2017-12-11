@@ -20,7 +20,7 @@ class SlackMessaging():
 
       payload = {
            'username': 'Bot Qui Qui',
-           'icon_emoji': 'eye',
+           'icon_url': 'https://s3-us-west-1.amazonaws.com/maryoung/BotQuiQui.jpg',
            'link_names' : '1',
            'channel': 'sekurrity',
            'text': message,
