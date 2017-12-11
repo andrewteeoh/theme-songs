@@ -3,6 +3,11 @@ import cv2
 import os
 import time
 import sekurrity
+import scipy.misc
+import time
+import boto3
+import slack_stuff
+
 # This is a super simple (but slow) example of running face recognition on live video from your webcam.
 # There's a second example that's a little more complicated but runs faster.
 
@@ -64,6 +69,16 @@ def play_who_are_you():
     os.system("osascript -e 'tell application \"spotify\" to play track \"spotify:track:02DurCgOvDdX0uKEjqcl3W\"'")
     os.system("osascript -e 'tell application \"spotify\" to set player position to 128'")
 
+s3 = boto3.resource('s3')
+messenger = slack_stuff.SlackMessaging()
+def send_image_of_unknown(frame):
+    filename = 'unknown'+str(time.time())+'.jpg'
+    scipy.misc.imsave(filename, frame)
+    image_data = open(filename, 'rb')
+    image_url = 'https://s3-us-west-1.amazonaws.com/maryoung/'+filename
+    bimage = s3.Bucket('maryoung').put_object(Key=filename, Body=image_data)
+    messenger.post_image('Sekurrity!!', image_url)
+
 while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
@@ -96,6 +111,7 @@ while True:
                 song_playing = "02DurCgOvDdX0uKEjqcl3W"
                 unknown_counter = 0
                 capture_interval = 15
+                send_image_of_unknown(frame)
 
         if previous_person == "Unknown" and person == "Unknown":
             unknown_counter += 1
