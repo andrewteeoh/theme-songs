@@ -11,6 +11,11 @@ connection = sqlite3.connect(db_path)
 def get_cursor():
     return connection.cursor()
 
+def get_all_faces():
+    c = get_cursor()
+    c.execute("SELECT * from faces")
+    return c.fetchall()
+
 def get_face_record(face_id):
     c = get_cursor()
     c.execute("SELECT * from faces where id=?", str(face_id))
@@ -44,7 +49,7 @@ def retrieve_face_encoding(face_id):
     face = get_face_record(face_id)
     if face is None:
         return None
-    return deserialize_encoding(face[3])
+    return deserialize_encoding(face[5])
 
 def has_entered_today(face_id):
     c = get_cursor()
