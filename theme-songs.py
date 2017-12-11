@@ -62,7 +62,7 @@ def play_song(face):
 
 def play_who_are_you():
     os.system("osascript -e 'tell application \"spotify\" to play track \"spotify:track:02DurCgOvDdX0uKEjqcl3W\"'")
-    os.system("osascript -e 'tell application \"spotify\" to set player position to 133'")
+    os.system("osascript -e 'tell application \"spotify\" to set player position to 128'")
 
 while True:
     # Grab a single frame of video
@@ -93,6 +93,7 @@ while True:
                 unknown_counter = 0
             elif capture_interval == 0 and person == "Unknown" and unknown_counter > 3:
                 play_who_are_you()
+                song_playing = "02DurCgOvDdX0uKEjqcl3W"
                 unknown_counter = 0
                 capture_interval = 15
 
