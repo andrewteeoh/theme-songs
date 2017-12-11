@@ -19,11 +19,7 @@ video_capture = cv2.VideoCapture(0)
 
 known_faces = []
 known_names = []
-spotify_tracks = {
-    "Unknown": "02DurCgOvDdX0uKEjqcl3W",
-    "Andrew_Tio": "7ofFNEqVY1PUdrrL6iXthZ",
-    "Raymond_Young": "2zYzyRzz6pRmhPzyfMEC8s"
-}
+
 # known = 'known'
 # directory = os.fsencode(known)
 
@@ -48,13 +44,25 @@ for face in faces:
 match_not_found = True
 capture_interval = 0
 song_playing = False
+previous_person = False
 unknown_counter = 0
 
 def get_spotify_track(face):
     return face[3]
 
+def get_spotify_time(face):
+    return face[4]
+
 def get_name(face):
     return face[1]
+
+def play_song(face):
+    os.system("osascript -e 'tell application \"spotify\" to play track \"spotify:track:" + get_spotify_track(face) + "\"'")
+    os.system("osascript -e 'tell application \"spotify\" to set player position to {}'".format(get_spotify_time(face)))
+
+def play_who_are_you():
+    os.system("osascript -e 'tell application \"spotify\" to play track \"spotify:track:02DurCgOvDdX0uKEjqcl3W\"'")
+    os.system("osascript -e 'tell application \"spotify\" to set player position to 133'")
 
 while True:
     # Grab a single frame of video
@@ -77,19 +85,23 @@ while True:
                 face = known_names[index]
                 person = get_name(face)
                 print("I see you " + person)
-            else:
-                unknown_counter += 1
-            print("Unknown counter: {}".format(unknown_counter))
+
             if capture_interval == 0 and face and song_playing != get_spotify_track(face):
-                os.system("osascript -e 'tell application \"spotify\" to play track \"spotify:track:" + get_spotify_track(face) + "\"'")
+                play_song(face)
                 song_playing = get_spotify_track(face)
                 capture_interval = 15
                 unknown_counter = 0
-            if capture_interval == 0 and person == "Unknown" and unknown_counter > 3:
-                os.system("osascript -e 'tell application \"spotify\" to play track \"spotify:track:02DurCgOvDdX0uKEjqcl3W\"'")
-                os.system("osascript -e 'tell application \"spotify\" to set player position to 133'")
+            elif capture_interval == 0 and person == "Unknown" and unknown_counter > 3:
+                play_who_are_you()
                 unknown_counter = 0
                 capture_interval = 15
+
+        if previous_person == "Unknown" and person == "Unknown":
+            unknown_counter += 1
+        else:
+            unknown_counter = 0
+
+        previous_person = person
 
         # Draw a box around the face
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
